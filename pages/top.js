@@ -1,6 +1,8 @@
 import Layout from '../components/Layout'
 import Artist from '../components/Artist'
 import styled from 'styled-components'
+import { getTopArtists } from '../lib/spotify'
+import { getTopTracks } from '../lib/spotify'
 
 const Heading = styled.h1`
   font-family: 'Rock Salt', cursive;
@@ -38,11 +40,24 @@ const Top = ({ tracks, artists }) => {
 export default Top
 
 export async function getStaticProps() {
-  const resTracks = await fetch('http://localhost:3000/api/topTracks')
-  const tracks = await resTracks.json()
+  const resTracks = await getTopTracks()
+  const tracksItems = await resTracks.json()
+  const tracks = tracksItems.items.map((track) => ({
+    artist: track.artists.map((_artist) => _artist.name).join(', '),
+    songUrl: track.external_urls.spotify,
+    title: track.name
+  }))
 
-  const resArtists = await fetch('http://localhost:3000/api/topArtists')
-  const artists = await resArtists.json()
+  const resArtists = await getTopArtists()
+  const artistsItems = await resArtists.json()
+  const artists = artistsItems.items.map((artist) => ({
+    name: artist.name,
+    genres: artist.genres,
+    artistUrl: artist.external_urls.spotify,
+    images: artist.images,
+    popularityRating: artist.popularity,
+    followers: artist.followers.total
+  }))
 
   if (!tracks && !artists) {
     return {
@@ -52,8 +67,8 @@ export async function getStaticProps() {
 
   return {
     props: { 
-      tracks: tracks.tracks,
-      artists: artists.artists
+      tracks: tracks,
+      artists: artists
     }
   }
 }

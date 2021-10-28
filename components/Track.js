@@ -33,7 +33,7 @@ const Heading = styled.h1`
 `
 
 const Track = ({ track }) => {
-
+console.log("trackID", track.id)
   return (
     <Card>
       <LeftColumn>

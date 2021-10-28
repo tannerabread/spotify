@@ -37,7 +37,7 @@ const YellowSpan = styled.span`
 `
 
 const Artist = ({ artist }) => {
-  console.log("artist", artist)
+
   return (
     <Card href={artist.artistUrl}>
       <LeftColumn>

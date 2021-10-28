@@ -1,12 +1,12 @@
-import { useRouter } from 'next/router'
 import { getTrackAnalysis } from '../../lib/spotify'
+import { getTrackAudioFeatures } from '../../lib/spotify'
 
-const Track = ({ trackData }) => {
+const Track = ({ trackAudioAnalysis, trackAudioFeatures }) => {
   
 
   return (
     <>
-      {JSON.stringify(trackData)}
+      {JSON.stringify(trackAudioFeatures)}
     </>
   )
 }
@@ -16,16 +16,18 @@ export default Track
 export async function getServerSideProps(context) {
   const id = context.query.id
 
-  const resTrackData = await getTrackAnalysis(id)
-  // console.log(await resTrackData)
-  const trackData = await resTrackData.json()
-  // console.log("trackData", trackData)
+  const resAudioAnalysis = await getTrackAnalysis(id)
+  const trackAudioAnalysis = await resAudioAnalysis.json()
 
-  if (!trackData) return { notFound: true }
+  const resAudioFeatures = await getTrackAudioFeatures(id)
+  const trackAudioFeatures = await resAudioFeatures.json()
+
+  if (!trackAudioAnalysis && !trackAudioFeatures) return { notFound: true }
 
   return {
     props: {
-      trackData: trackData
+      trackAudioAnalysis: trackAudioAnalysis,
+      trackAudioFeatures: trackAudioFeatures
     }
   }
 }
